@@ -1,0 +1,9 @@
+*.iml
+*.ipr
+.idea
+/.classpath
+/.project
+/.settings/
+/bazel-*
+/eclipse-out/
+.DS_Store
