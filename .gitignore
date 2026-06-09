@@ -7,3 +7,4 @@
 /bazel-*
 /eclipse-out/
 .DS_Store
+.bazelversion

@@ -1,5 +1,9 @@
-load("//tools/bzl:junit.bzl", "junit_tests")
-load("//tools/bzl:plugin.bzl", "PLUGIN_DEPS", "PLUGIN_DEPS_NEVERLINK", "PLUGIN_TEST_DEPS", "gerrit_plugin")
+load(
+    "@com_googlesource_gerrit_bazlets//:gerrit_plugin.bzl",
+    "gerrit_plugin",
+    "gerrit_plugin_tests",
+)
+load("@rules_java//java:defs.bzl", "java_library")
 
 gerrit_plugin(
     name = "owners-autoassign",
@@ -13,7 +17,7 @@ gerrit_plugin(
         "Gerrit-PluginName: owners-autoassign",
         "Gerrit-Module: com.googlesource.gerrit.owners.common.AutoassignModule",
     ],
-    resources = glob(["src/main/**/*"]),
+    resources = glob(["src/main/resources/**/*"]),
     deps = [
         ":owners-common-api-neverlink",
     ],
@@ -22,30 +26,14 @@ gerrit_plugin(
 java_library(
     name = "owners-common-api-neverlink",
     neverlink = 1,
-    exports = [
-        "//plugins/owners-common-api",
-    ],
+    exports = ["//plugins/owners-common-api"],
 )
 
-java_library(
-    name = "owners-autoassign_deps",
-    srcs = glob([
-        "src/main/java/**/*.java",
-    ]),
-    visibility = ["//visibility:public"],
-    exports = [
-        "//plugins/owners-common-api",
-    ],
-    deps = PLUGIN_DEPS_NEVERLINK + [
-        "//plugins/owners-common-api",
-    ],
-)
-
-junit_tests(
+gerrit_plugin_tests(
     name = "owners_autoassign_tests",
-    testonly = 1,
     srcs = glob(["src/test/java/**/*.java"]),
-    deps = PLUGIN_DEPS + PLUGIN_TEST_DEPS + [
-        ":owners-autoassign_deps",
+    plugin = "owners-autoassign",
+    deps = [
+        "//plugins/owners-common-api",
     ],
 )
